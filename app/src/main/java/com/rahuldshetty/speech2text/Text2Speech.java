@@ -16,6 +16,7 @@ public class Text2Speech {
                 if(status!=TextToSpeech.ERROR)
                 {
                     tts.setLanguage(Locale.UK);
+                    tts.setSpeechRate(0.9f);
                 }
             }
         });
