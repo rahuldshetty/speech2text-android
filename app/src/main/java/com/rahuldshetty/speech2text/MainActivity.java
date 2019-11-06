@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "ERROR";
 
-    private String requestString,responseString;
+    private String requestString,responseString,ipaddress = "192.168.1.103";
 
     private Bitmap photo=null;
     private byte[] img_stream;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         camera.startPreview();
 
         final EditText edittext = new EditText(this);
-        edittext.setText("192.168.1.103");
+        edittext.setText(ipaddress);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         alert.setMessage("Enter IP Address:");
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = edittext.getText().toString();
+                ipaddress = value;
                 postUrl = ClientInternet.getPostUrl(value);
             }
         });
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.JPEG,50,stream);
+            photo.compress(Bitmap.CompressFormat.JPEG,80,stream);
 
             byte[] byteArray = stream.toByteArray();
 
