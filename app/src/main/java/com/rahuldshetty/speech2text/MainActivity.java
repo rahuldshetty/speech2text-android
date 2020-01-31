@@ -9,6 +9,7 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.util.Log;
@@ -59,7 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
     final static String TAG = "ERROR";
 
-    private String requestString,responseString,ipaddress = "192.168.1.103";
+    private String requestString,responseString,ipaddress;
+
+    private SharedPreferences prefs;
 
     private Bitmap photo=null;
     private byte[] img_stream;
@@ -114,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        prefs =  getPreferences(MODE_PRIVATE);
+
+        ipaddress = prefs.getString("ipaddress", "192.168.1.103");
+        postUrl = ClientInternet.getPostUrl(ipaddress);
     }
 
     void refresh_status(){
@@ -133,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String value = edittext.getText().toString();
                 ipaddress = value;
+                prefs.edit().putString("ipaddress",ipaddress).commit();
                 postUrl = ClientInternet.getPostUrl(value);
             }
         });
@@ -166,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            photo.compress(Bitmap.CompressFormat.JPEG,80,stream);
+            photo.compress(Bitmap.CompressFormat.JPEG,100,stream);
 
             byte[] byteArray = stream.toByteArray();
 
@@ -269,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
 
                         RequestBody postBodyImage = new MultipartBody.Builder()
                                 .setType(MultipartBody.FORM)
+                                .addFormDataPart("request",requestString)
                                 .addFormDataPart("image", "android.jpg", RequestBody.create(MediaType.parse("image/*jpg"), img_stream))
                                 .build();
 
